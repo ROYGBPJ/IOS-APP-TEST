@@ -3,13 +3,11 @@ import PackageDescription
 
 let package = Package(
     name: "TimeSecondsDisplayer",
-    platforms: [.iOS(.v17)],
+    platforms: [.iOS(.v15), .macOS(.v13)],
     products: [
         .library(name: "TimeSecondsDisplayer", targets: ["TimeSecondsDisplayer"]),
-        .library(name: "TimeSecondsWidget", targets: ["TimeSecondsWidget"]),
     ],
     targets: [
         .target(name: "TimeSecondsDisplayer"),
-        .target(name: "TimeSecondsWidget"),
     ]
 )
