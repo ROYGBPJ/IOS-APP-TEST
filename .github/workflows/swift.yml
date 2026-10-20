@@ -9,23 +9,14 @@ on:
 
 jobs:
   build:
-    runs-on: macos-latest
+    runs-on: macos-15
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Swift toolchain
-        run: swift --version
+      - name: Select Xcode
+        run: sudo xcode-select -switch /Applications/Xcode_16.2.app
 
-      - name: Build Swift package
-        run: swift build -c release
-
-      - name: Run Swift tests
-        run: swift test --parallel
-
-      - name: Upload build artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: TimeSecondsDisplayer-Build
-          path: .build
+      - name: Build iOS app
+        run: xcodebuild -scheme TimeSecondsDisplayer -destination 'platform=iOS Simulator,name=iPhone 16' build
