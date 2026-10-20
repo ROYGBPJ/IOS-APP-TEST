@@ -15,18 +15,17 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup xtool Compiler
-        uses: xtool-org/setup-xtool@v1
+      - name: Set up Swift toolchain
+        run: swift --version
 
-      - name: Verify xtool Installation
-        run: xtool --version
+      - name: Build Swift package
+        run: swift build -c release
 
-      - name: Compile iOS IPA Build Binary
-        run: |
-          xtool dev build --ipa
+      - name: Run Swift tests
+        run: swift test --parallel
 
-      - name: Upload Build Artifacts
+      - name: Upload build artifacts
         uses: actions/upload-artifact@v4
         with:
           name: TimeSecondsDisplayer-Build
-          path: build/*.ipa
+          path: .build
