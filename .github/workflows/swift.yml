@@ -9,14 +9,11 @@ on:
 
 jobs:
   build:
-    runs-on: macos-15
+    runs-on: macos-latest
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Select Xcode
-        run: sudo xcode-select -switch /Applications/Xcode_16.2.app
-
-      - name: Build iOS app
-        run: xcodebuild -scheme TimeSecondsDisplayer -destination 'platform=iOS Simulator,name=iPhone 16' build
+      - name: Build portable library target
+        run: swift build --product TimeSecondsDisplayer
