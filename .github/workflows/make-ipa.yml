@@ -1,0 +1,31 @@
+name: Generate IPA Output
+
+on:
+  workflow_dispatch:  # This lets you trigger it manually on the webpage
+
+jobs:
+  build-ipa:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout project files
+        uses: actions/checkout@v4
+
+      - name: Setup xtool Engine
+        run: |
+          curl -fL https://github.com -o xtool
+          chmod +x xtool
+          sudo mv xtool /usr/local/bin/
+          echo "/usr/local/bin" >> $GITHUB_PATH
+
+      - name: Verify xtool Installation
+        run: xtool --version
+
+      - name: Compile and Export IPA Bundle
+        run: |
+          xtool dev build --ipa
+
+      - name: Upload File Bundle Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: TimeSecondsDisplayer-Build
+          path: build/*.ipa
