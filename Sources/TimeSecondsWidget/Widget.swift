@@ -32,13 +32,11 @@ struct TimeSecondsWidgetEntryView: View {
 
     var body: some View {
         ZStack {
-            // High-contrast futuristic background
             Color(hex: "0A0A0C")
                 .ignoresSafeArea()
 
             if #available(iOS 16.0, *) {
                 if family == .accessoryCircular {
-                    // Lock Screen Circular: Minimalist neon ring and time
                     ZStack {
                         Circle()
                             .stroke(Color.cyan.opacity(0.3), lineWidth: 2)
@@ -48,7 +46,6 @@ struct TimeSecondsWidgetEntryView: View {
                     }
                     .frame(width: 44, height: 44)
                 } else if family == .accessoryRectangular {
-                    // Lock Screen Rectangular: Elegant linear display
                     HStack {
                         Image(systemName: "clock.fill")
                             .foregroundColor(.cyan)
@@ -117,9 +114,9 @@ extension Color {
 
         let r, g, b, a: UInt64
         switch hex.count {
-        case 6: // RGB (24-bit)
+        case 6:
             (r, g, b, a) = ((int >> 16) & 0xFF, (int >> 8) & 0xFF, int & 0xFF, 255)
-        case 8: // RGB(A) (32-bit)
+        case 8:
             (r, g, b, a) = ((int >> 24) & 0xFF, (int >> 16) & 0xFF, (int >> 8) & 0xFF, int & 0xFF)
         default:
             (r, g, b, a) = (128, 128, 128, 255)
