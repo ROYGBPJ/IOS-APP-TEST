@@ -12,7 +12,6 @@ jobs:
 
       - name: Setup xtool Engine
         run: |
-          # FIXED: Changed domain to raw.githubusercontent.com to resolve the host properly
           curl -fL https://githubusercontent.com -o install.sh
           chmod +x install.sh
           ./install.sh
