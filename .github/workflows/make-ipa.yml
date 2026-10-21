@@ -1,7 +1,7 @@
 name: Generate IPA Output
 
 on:
-  workflow_dispatch:  # This lets you trigger it manually on the webpage
+  workflow_dispatch:  # This allows you to manually trigger it via the GitHub webpage
 
 jobs:
   build-ipa:
@@ -12,9 +12,10 @@ jobs:
 
       - name: Setup xtool Engine
         run: |
-          curl -fL https://github.com -o xtool
-          chmod +x xtool
-          sudo mv xtool /usr/local/bin/
+          # Downloads the raw installation script directly to avoid HTML errors
+          curl -fL https://githubusercontent.com -o install.sh
+          chmod +x install.sh
+          ./install.sh
           echo "/usr/local/bin" >> $GITHUB_PATH
 
       - name: Verify xtool Installation
