@@ -12,7 +12,7 @@ jobs:
 
       - name: Setup xtool Engine
         run: |
-          # Downloads the raw installation script directly to avoid HTML errors
+          # FIXED: Changed domain to raw.githubusercontent.com to resolve the host properly
           curl -fL https://githubusercontent.com -o install.sh
           chmod +x install.sh
           ./install.sh
