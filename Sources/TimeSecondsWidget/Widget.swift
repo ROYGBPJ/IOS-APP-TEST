@@ -25,7 +25,7 @@ struct TimeSecondsEntry: TimelineEntry {
     let date: Date
 }
 
-struct TimeSecondsWidgetEntryView : View {
+struct TimeSecondsWidgetEntryView: View {
     var entry: TimeSecondsEntry
 
     @Environment(\.widgetFamily) var family
@@ -36,42 +36,50 @@ struct TimeSecondsWidgetEntryView : View {
             Color(hex: "0A0A0C")
                 .ignoresSafeArea()
 
-            if family == .accessoryCircular {
-                // Lock Screen Circular: Minimalist neon ring and time
-                ZStack {
-                    Circle()
-                        .stroke(Color.cyan.opacity(0.3), lineWidth: 2)
-                    Text(formatSeconds(entry.date))
-                        .font(.system(size: 12, weight: .bold, design: .monospaced))
-                        .foregroundColor(.cyan)
+            if #available(iOS 16.0, *) {
+                if family == .accessoryCircular {
+                    // Lock Screen Circular: Minimalist neon ring and time
+                    ZStack {
+                        Circle()
+                            .stroke(Color.cyan.opacity(0.3), lineWidth: 2)
+                        Text(formatSeconds(entry.date))
+                            .font(.system(size: 12, weight: .bold, design: .monospaced))
+                            .foregroundColor(.cyan)
+                    }
+                    .frame(width: 44, height: 44)
+                } else if family == .accessoryRectangular {
+                    // Lock Screen Rectangular: Elegant linear display
+                    HStack {
+                        Image(systemName: "clock.fill")
+                            .foregroundColor(.cyan)
+                        Text("NOW: \(formatFullTime(entry.date))")
+                            .font(.system(size: 14, weight: .medium, design: .monospaced))
+                            .foregroundColor(.white)
+                    }
+                    .padding(.horizontal, 8)
+                } else {
+                    homeScreenView
                 }
-                .frame(width: 44, height: 44)
-            } else if family == .accessoryRectangular {
-                // Lock Screen Rectangular: Elegant linear display
-                HStack {
-                    Image(systemName: "clock.fill")
-                        .foregroundColor(.cyan)
-                    Text("NOW: \(formatFullTime(entry.date))")
-                        .font(.system(size: 14, weight: .medium, design: .monospaced))
-                        .foregroundColor(.white)
-                }
-                .padding(.horizontal, 8)
             } else {
-                // Home Screen Widget: High-end Digital Display
-                VStack {
-                    Text("TimeSeconds")
-                        .font(.system(size: 12, weight: .bold, design: .monospaced))
-                        .foregroundColor(.gray)
-                        .kerning(2)
-
-                    Text(formatFullTime(entry.date))
-                        .font(.system(size: 32, weight: .thin, design: .monospaced))
-                        .foregroundColor(.white)
-                        .shadow(color: .cyan, radius: 10)
-                }
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                homeScreenView
             }
         }
+    }
+
+    @ViewBuilder
+    private var homeScreenView: some View {
+        VStack {
+            Text("TimeSeconds")
+                .font(.system(size: 12, weight: .bold, design: .monospaced))
+                .foregroundColor(.gray)
+                .kerning(2)
+
+            Text(formatFullTime(entry.date))
+                .font(.system(size: 32, weight: .thin, design: .monospaced))
+                .foregroundColor(.white)
+                .shadow(color: .cyan, radius: 10)
+        }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     func formatSeconds(_ date: Date) -> String {
@@ -106,21 +114,23 @@ extension Color {
         let hex = hex.trimmingCharacters(in: CharacterSet.alphanumerics.inverted)
         var int: UInt64 = 0
         Scanner(string: hex).scanHexInt64(&int)
-        let r, g, b: UInt64
+
+        let r, g, b, a: UInt64
         switch hex.count {
         case 6: // RGB (24-bit)
-            (r, g, b) = ( (int >> 16) & 0xFF, (int >> 8) & 0xFF, int & 0xFF )
+            (r, g, b, a) = ((int >> 16) & 0xFF, (int >> 8) & 0xFF, int & 0xFF, 255)
         case 8: // RGB(A) (32-bit)
-            (r, g, b) = ( (int >> 24) & 0xFF, (int >> 16) & 0xFF, (int >> 8) & 0xFF, 0 )
+            (r, g, b, a) = ((int >> 24) & 0xFF, (int >> 16) & 0xFF, (int >> 8) & 0xFF, int & 0xFF)
         default:
-            (r, g, b) = (128, 128, 128)
+            (r, g, b, a) = (128, 128, 128, 255)
         }
+
         self.init(
             .sRGB,
             red: Double(r) / 255,
             green: Double(g) / 255,
             blue: Double(b) / 255,
-            opacity: 1.0
+            opacity: Double(a) / 255
         )
     }
 }
